@@ -8,6 +8,14 @@ const getAllTalkers = async (filePath) => {
   return parsedData;
 };
 
+const getTalkerByID = async (filePath, talkerID) => {
+  const talkerArray = await getAllTalkers(filePath);
+  const talker = talkerArray.filter(({ id }) => String(id) === String(talkerID));
+
+  return talker;
+};
+
 module.exports = {
   getAllTalkers,
+  getTalkerByID,
 };
