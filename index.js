@@ -1,7 +1,7 @@
 const express = require('express');
-const rescue = require('express-rescue');
 const bodyParser = require('body-parser');
 const middlewares = require('./middlewares');
+const talkerRouter = require('./routes/talkerRouter');
 
 const app = express();
 app.use(bodyParser.json());
@@ -9,11 +9,7 @@ app.use(bodyParser.json());
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';
 
-app.route('/talker')
-  .get(rescue(middlewares.getAllTalkers));
-
-app.route('/talker/:id')
-  .get(rescue(middlewares.getTalkerByID));
+app.use('/talker', talkerRouter);
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
