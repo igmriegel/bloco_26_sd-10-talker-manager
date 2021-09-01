@@ -1,8 +1,11 @@
 const model = require('../model');
+const services = require('../services');
 
 const HTTP_OK_STATUS = 200;
+const HTTP_BAD_REQST = 400;
 const HTTP_NOT_FOUND = 404;
 const talkersFile = 'talker.json';
+const tokenSize = 8;
 
 const getAllTalkers = async (_req, res) => {
   const talkerData = await model.getAllTalkers(talkersFile);
@@ -24,8 +27,21 @@ const getTalkerByID = async (req, res, next) => {
   return res.status(HTTP_OK_STATUS).json(talkerData);
 };
 
+const doLogin = (req, res, next) => {
+  const { email, password } = req.body;
+  try {
+    const token = services.validateLoginData(email, password, tokenSize);
+  
+    return res.status(HTTP_OK_STATUS).json({ token });
+  } catch (e) {
+    const { message } = e;
+    return next({ status: HTTP_BAD_REQST, message });
+  }
+};
+
 const errorMiddleware = (err, _req, res, _next) => {
   const { status, message } = err;
+  console.log(`ran one error status: ${status} and message: ${message}`);
 
   return res.status(status).json({ message });
 };
@@ -33,5 +49,6 @@ const errorMiddleware = (err, _req, res, _next) => {
 module.exports = {
   getAllTalkers,
   getTalkerByID,
+  doLogin,
   errorMiddleware,
 };
