@@ -5,6 +5,7 @@ const HTTP_OK_STATUS = 200;
 const HTTP_BAD_REQST = 400;
 const HTTP_NOT_FOUND = 404;
 const talkersFile = 'talker.json';
+const tokensFile = 'loginTokens.json';
 const tokenSize = 8;
 
 const getAllTalkers = async (_req, res) => {
@@ -27,10 +28,10 @@ const getTalkerByID = async (req, res, next) => {
   return res.status(HTTP_OK_STATUS).json(talkerData);
 };
 
-const doLogin = (req, res, next) => {
+const doLogin = async (req, res, next) => {
   const { email, password } = req.body;
   try {
-    const token = services.validateLoginData(email, password, tokenSize);
+    const token = await services.validateLoginData(email, password, tokenSize, tokensFile);
   
     return res.status(HTTP_OK_STATUS).json({ token });
   } catch (e) {

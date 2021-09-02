@@ -1,11 +1,26 @@
 const fs = require('fs').promises;
 // const path = require('path');
 
-const getAllTalkers = async (filePath) => {
-  const talkersData = await fs.readFile(filePath, 'utf-8');
-  const parsedData = await JSON.parse(talkersData);
+const readFile = async (filePath) => {
+  const data = await fs.readFile(filePath, 'utf-8');
+  const parsedData = await JSON.parse(data);
 
   return parsedData;
+};
+
+const appendTextData = async (filePath, data) => {
+  const oldData = await readFile(filePath);
+  const newData = JSON.stringify([...oldData, data], null, '  ');
+
+  fs.writeFile(filePath, newData, { flag: 'w+' })
+    .then(() => console.log(`${JSON.stringify(data)} saved to ${filePath}`))
+    .catch((error) => console.log(error));
+};
+
+const getAllTalkers = async (filePath) => {
+  const allTalkers = await readFile(filePath);
+
+  return allTalkers;
 };
 
 const getTalkerByID = async (filePath, talkerID) => {
@@ -18,4 +33,5 @@ const getTalkerByID = async (filePath, talkerID) => {
 module.exports = {
   getAllTalkers,
   getTalkerByID,
+  appendTextData,
 };

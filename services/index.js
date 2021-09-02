@@ -1,4 +1,5 @@
 const { randomBytes } = require('crypto');
+const model = require('../model');
 
 const validateEmail = (email) => {
   if (!email) throw new Error('O campo "email" é obrigatório');
@@ -15,15 +16,18 @@ const validatePass = (password) => {
   if (password.length < 6) throw new Error('O "password" deve ter pelo menos 6 caracteres');
 };
 
-const validateLoginData = (email, pass, tokenSize) => {
+const validateLoginData = async (email, pass, tokenSize, savePath) => {
   try {
     validateEmail(email);
     validatePass(pass);
   } catch (e) {
     throw new Error(e.message);
   }
+  const token = randomBytes(tokenSize).toString('hex');
 
-  return randomBytes(tokenSize).toString('hex');
+  await model.appendTextData(savePath, { email, token });
+
+  return token;
 };
 
 module.exports = {
