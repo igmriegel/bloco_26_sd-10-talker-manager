@@ -2,6 +2,7 @@ const model = require('../model');
 const services = require('../services');
 
 const HTTP_OK_STATUS = 200;
+const HTTP_CREATED_STATUS = 201;
 const HTTP_BAD_REQST = 400;
 const HTTP_NOT_FOUND = 404;
 const talkersFile = 'talker.json';
@@ -40,6 +41,36 @@ const doLogin = async (req, res, next) => {
   }
 };
 
+const createTalker = async (req, res, next) => {
+  const { name, age, talk } = req.body;
+  const { authorization } = req.headers;
+
+  try {
+    await services.validateToken(tokensFile, authorization);
+    services.validateTalkerData({ name, age, talk });
+
+    const talker = await services.createTalker({ name, age, talk }, talkersFile);
+
+    return res.status(HTTP_CREATED_STATUS).json({ ...talker });
+  } catch (e) {
+    console.log(e);
+    const { status, message } = e;
+    return next({ status, message });
+  }
+};
+
+const editTalker = async (req, res, _next) => {
+  const { id } = req.params;
+
+  return res.send(id);
+};
+
+const deleteTalker = async (req, res, _next) => {
+  const { id } = req.params;
+
+  return res.send({ id, action: 'delete' });
+};
+
 const errorMiddleware = (err, _req, res, _next) => {
   const { status, message } = err;
   console.log(`ran one error status: ${status} and message: ${message}`);
@@ -51,5 +82,8 @@ module.exports = {
   getAllTalkers,
   getTalkerByID,
   doLogin,
+  createTalker,
+  editTalker,
+  deleteTalker,
   errorMiddleware,
 };

@@ -1,7 +1,6 @@
 const fs = require('fs').promises;
-// const path = require('path');
 
-const readFile = async (filePath) => {
+const readParseFile = async (filePath) => {
   const data = await fs.readFile(filePath, 'utf-8');
   const parsedData = await JSON.parse(data);
 
@@ -9,7 +8,7 @@ const readFile = async (filePath) => {
 };
 
 const appendTextData = async (filePath, data) => {
-  const oldData = await readFile(filePath);
+  const oldData = await readParseFile(filePath);
   const newData = JSON.stringify([...oldData, data], null, '  ');
 
   fs.writeFile(filePath, newData, { flag: 'w+' })
@@ -18,7 +17,7 @@ const appendTextData = async (filePath, data) => {
 };
 
 const getAllTalkers = async (filePath) => {
-  const allTalkers = await readFile(filePath);
+  const allTalkers = await readParseFile(filePath);
 
   return allTalkers;
 };
@@ -30,8 +29,16 @@ const getTalkerByID = async (filePath, talkerID) => {
   return talker;
 };
 
+const getAllTokens = async (filePath) => {
+  const tonkensArray = await readParseFile(filePath);
+  const tokensList = tonkensArray.map((i) => i.token);
+
+  return tokensList;
+};
+
 module.exports = {
   getAllTalkers,
   getTalkerByID,
+  getAllTokens,
   appendTextData,
 };
