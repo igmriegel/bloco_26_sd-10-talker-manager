@@ -36,9 +36,21 @@ const getAllTokens = async (filePath) => {
   return tokensList;
 };
 
+const deleteTalkerByID = async (filePath, talkerID) => {
+  const oldData = await readParseFile(filePath);
+  const filteredData = oldData.filter(({ id }) => id !== parseInt(talkerID, 10));
+
+  const normalizedData = JSON.stringify(filteredData, null, '  ');
+
+  fs.writeFile(filePath, normalizedData, { flag: 'w+' })
+    .then(() => console.log(`Talker with ID:${talkerID} deleted from ${filePath}`))
+    .catch((error) => console.log(error));
+};
+
 module.exports = {
   getAllTalkers,
   getTalkerByID,
   getAllTokens,
   appendTextData,
+  deleteTalkerByID,
 };

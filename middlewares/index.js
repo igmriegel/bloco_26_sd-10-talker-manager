@@ -65,10 +65,21 @@ const editTalker = async (req, res, _next) => {
   return res.send(id);
 };
 
-const deleteTalker = async (req, res, _next) => {
+const deleteTalker = async (req, res, next) => {
   const { id } = req.params;
+  const { authorization } = req.headers;
+  
+  try {
+    const message = 'Pessoa palestrante deletada com sucesso';
+    await services.validateToken(tokensFile, authorization);
+    await model.deleteTalkerByID(talkersFile, id);
 
-  return res.send({ id, action: 'delete' });
+    return res.status(HTTP_OK_STATUS).json({ message });
+  } catch (e) {
+    console.log(e);
+    const { status, message } = e;
+    return next({ status, message });
+  }
 };
 
 const errorMiddleware = (err, _req, res, _next) => {
