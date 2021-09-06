@@ -99,10 +99,18 @@ const validateTalkerData = (talkerData) => {
   if (inValidTalk) throw customError(400, inValidTalk);
 };
 
-const createTalker = async (talkerData, savePath) => {
+const createTalker = async (talkerData, savePath, talkerId = '') => {
   const talkersArray = await model.getAllTalkers(savePath);
-  const lastID = Math.max(...talkersArray.map(({ id }) => id)) + 1;
-  const talkerObj = { id: lastID, ...talkerData };
+  let newID = talkerId;
+
+  if (!talkerId) {
+    newID = Math.max(...talkersArray.map(({ id }) => id)) + 1;
+  }
+
+  const talkerObj = {
+    id: parseInt(newID, 10),
+    ...talkerData,
+  };
 
   model.appendTextData(savePath, talkerObj);
 

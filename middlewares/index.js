@@ -59,10 +59,24 @@ const createTalker = async (req, res, next) => {
   }
 };
 
-const editTalker = async (req, res, _next) => {
+const editTalker = async (req, res, next) => {
+  const { name, age, talk } = req.body;
   const { id } = req.params;
+  const { authorization } = req.headers;
 
-  return res.send(id);
+  try {
+    await services.validateToken(tokensFile, authorization);
+    services.validateTalkerData({ name, age, talk });
+    await model.deleteTalkerByID(talkersFile, id);
+
+    const talker = await services.createTalker({ name, age, talk }, talkersFile, id);
+
+    return res.status(HTTP_OK_STATUS).json({ ...talker });
+  } catch (e) {
+    console.log(e);
+    const { status, message } = e;
+    return next({ status, message });
+  }
 };
 
 const deleteTalker = async (req, res, next) => {
