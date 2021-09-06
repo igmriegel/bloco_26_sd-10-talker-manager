@@ -96,6 +96,22 @@ const deleteTalker = async (req, res, next) => {
   }
 };
 
+const searchTalker = async (req, res, next) => {
+  const { authorization } = req.headers;
+  const { q } = req.query;
+
+  try {
+    await services.validateToken(tokensFile, authorization);
+    const queryResult = await model.textSearchOnFile(talkersFile, q);
+
+    return res.status(HTTP_OK_STATUS).json(queryResult);
+  } catch (e) {
+    console.log(e);
+    const { status, message } = e;
+    return next({ status, message });
+  }
+};
+
 const errorMiddleware = (err, _req, res, _next) => {
   const { status, message } = err;
   console.log(`ran one error status: ${status} and message: ${message}`);
@@ -110,5 +126,6 @@ module.exports = {
   createTalker,
   editTalker,
   deleteTalker,
+  searchTalker,
   errorMiddleware,
 };

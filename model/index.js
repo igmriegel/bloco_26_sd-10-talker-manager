@@ -47,10 +47,19 @@ const deleteTalkerByID = async (filePath, talkerID) => {
     .catch((error) => console.log(error));
 };
 
+const textSearchOnFile = async (filePath, query) => {
+  const talkerList = await getAllTalkers(filePath);
+  const searchResult = talkerList
+    .filter(({ name }) => name.toLowerCase().includes(String(query).toLowerCase()));
+
+  return searchResult;
+};
+
 module.exports = {
   getAllTalkers,
   getTalkerByID,
   getAllTokens,
   appendTextData,
   deleteTalkerByID,
+  textSearchOnFile,
 };

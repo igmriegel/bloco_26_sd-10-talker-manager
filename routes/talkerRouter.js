@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.get('/', rescue(middlewares.getAllTalkers));
 router.post('/', rescue(middlewares.createTalker));
+router.get('/search', rescue(middlewares.searchTalker));
 router.get('/:id', rescue(middlewares.getTalkerByID));
 router.put('/:id', rescue(middlewares.editTalker));
 router.delete('/:id', rescue(middlewares.deleteTalker));
